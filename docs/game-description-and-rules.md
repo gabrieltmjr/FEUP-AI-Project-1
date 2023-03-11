@@ -9,7 +9,7 @@ Pieces are double sided. One is blank and other side is numbered from 1 to 5.
 
 You can select game style by selecting faces.  The starting position for game play is limitless.
 
-![Game Pieces](docs\img\pieces.jpg)
+![Game Pieces](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/pieces.jpg)
 
 # Game Modes/Styles
 
@@ -48,7 +48,7 @@ Each piece moves are complex but you don't have to memorize them because they ar
 
 1 - Basically any pieces can move to adjacent tile in any of 8 directions, vertically, horizontally and diagonally like chess king.
 
-![Simple Movement Example](img\simple-movement-example.jpg)
+![Simple Movement Example](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/simple-movement-example.jpg)
 
 2 - Consecutive tiles of the player's color may be counted as one extended tile for movement purposes.  
 
@@ -58,15 +58,15 @@ Each piece moves are complex but you don't have to memorize them because they ar
 
 - In the third example both the starting tile and the one to the left and right are considered one long tile so the player may move to adjacent white tiles and consider that a single move.
 
-![Extended Movement Example](docs\img\extended-movement-examples.jpg)
+![Extended Movement Example](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/extended-movement-examples.jpg)
 
 A player can chose to stop moving at any tile in an extended tile path.  For example, in the first example below, the player could move one, two or three spaces to the right.
 
 Each players piece will have different movement options from identical locations based on their color as shown below.
 
-![Different Movement Example](docs\img\different-movement-examples.jpg)
+![Different Movement Example](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/different-movement-examples.jpg)
 
 Center tile is neutral color for both players. Any piece must stop there once.
 
-![Central Tile Movement Example](docs\img\central-tile-movement-examples.jpg)
+![Central Tile Movement Example](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/central-tile-movement-examples.jpg)
 
