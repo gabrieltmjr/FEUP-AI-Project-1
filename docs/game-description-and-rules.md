@@ -1,5 +1,18 @@
 # Game Description
 
+Cifra is a 2 player board game that has the objective of moving more pieces to the opposite side goal.
+Cifra Code25 is a version of CIFRA that has a 5x5 board size.
+
+# Game Pieces
+
+Pieces are double sided. One is blank and other side is numbered from 1 to 5.
+
+You can select game style by selecting faces.  The starting position for game play is limitless.
+
+![Game Pieces](docs\img\pieces.jpg)
+
+# Game Modes/Styles
+
 CIFRA has 3 types of game modes: Dash, King and Sum.
 
 ## Dash
@@ -18,7 +31,7 @@ Sum is basically a race game but you must consider the pieces value(number). The
 
 Players place their pieces blank side at first on the starting line, when game starts they reveal their number faces. Players must think about a deeper strategy considering placement and value of their pieces.
 
-# Game Rules
+# Game General Rules
 
 1 - Set up board by randomly placing tiles. <br>
 2 - Decide the first player, then the second player can choose their color and side. The Opposite side is automatically first player's color and side.<br>
@@ -45,6 +58,15 @@ Each piece moves are complex but you don't have to memorize them because they ar
 
 - In the third example both the starting tile and the one to the left and right are considered one long tile so the player may move to adjacent white tiles and consider that a single move.
 
-![Extended Movement Example](img\extended-movement-examples.jpg)
+![Extended Movement Example](docs\img\extended-movement-examples.jpg)
 
 A player can chose to stop moving at any tile in an extended tile path.  For example, in the first example below, the player could move one, two or three spaces to the right.
+
+Each players piece will have different movement options from identical locations based on their color as shown below.
+
+![Different Movement Example](docs\img\different-movement-examples.jpg)
+
+Center tile is neutral color for both players. Any piece must stop there once.
+
+![Central Tile Movement Example](docs\img\central-tile-movement-examples.jpg)
+
