@@ -9,6 +9,6 @@ Cifra Code25 is a version of CIFRA that has a 5x5 board size.
 
 # Group Members
 
-António Augusto (up20200705@edu.fe.up.pt) <br>
+António Augusto (up202000705@edu.fe.up.pt) <br>
 Gabriel Machado Jr. (up202008860@edu.fe.up.pt) <br>
 Miguel Curval (up201105191@edu.fe.up.pt)
