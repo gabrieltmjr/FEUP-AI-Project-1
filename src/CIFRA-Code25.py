@@ -39,8 +39,7 @@ class CIFRACode25:
         self.player = Color.WHITE
 
     def print_state(self):
-        colors = ['White', 'Blue']
-        print('Next player:', colors[self.player])
+        print('Next player:', ['⚪', '🔵'][self.player])
         print('Tiles:')
         print(self.tiles)
         print('Pieces:')
