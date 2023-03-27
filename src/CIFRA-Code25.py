@@ -3,8 +3,8 @@ import random
 import time
 import numpy as np
 import pygame
+from view.View import Screen
 from copy import deepcopy
-
 NUM_ROWS = 6
 NUM_COLS = 7
 
@@ -174,17 +174,7 @@ def minimax(state, depth, alpha, beta, maximizing, player, evaluate_func):
             break
     return minimaxEval
 
-
-# initializing the modules
-pygame.init()
- 
-# checking the initialization
-is_initialized = pygame.get_init()
- 
-# printing the result
-print('Is pygame modules initialized:',
-      is_initialized)
-
+screen = Screen()
 
 print("You thought it was CIFRA-Code25... But it was me! Connect 4!!!!!")
 print()
