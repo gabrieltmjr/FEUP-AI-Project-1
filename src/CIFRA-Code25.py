@@ -2,10 +2,12 @@ import math
 import random
 import time
 import numpy as np
+import pygame
 from copy import deepcopy
 
 NUM_ROWS = 6
 NUM_COLS = 7
+
 
 class State:
     
@@ -171,6 +173,17 @@ def minimax(state, depth, alpha, beta, maximizing, player, evaluate_func):
         if beta <= alpha:
             break
     return minimaxEval
+
+
+# initializing the modules
+pygame.init()
+ 
+# checking the initialization
+is_initialized = pygame.get_init()
+ 
+# printing the result
+print('Is pygame modules initialized:',
+      is_initialized)
 
 
 print("You thought it was CIFRA-Code25... But it was me! Connect 4!!!!!")
