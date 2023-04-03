@@ -1,103 +1,242 @@
+from ast import Pass
+import time
 import math
 import random
-import time
-import numpy as np
 from copy import deepcopy
-from enum import IntEnum
+from functools import reduce
+import operator
+import numpy as np
 
-WHITE_PIECE = '⬜'
-BLUE_PIECE = '🟦'
-CENTRE_PIECE = '⬛'
 
-NUM_TILES_PER_COLOR = 12
+def pick_random_move(state):
+    while not state.is_terminal():
+        move = random.choice(state.show_me_ya_moves())
+        state = state.make_move(move)
+    return state.get_winner()
 
-class Color(IntEnum):
-    WHITE = 0
-    BLUE = 1
 
-GOAL_ROW = [5 - 1, 0]
-HOME_ROW = [0, 5 - 1]
-BLUE_START_INDEX = 20
+class Node():
+    def __init__(self, state, parent):
+        self.state = state
+        self.parent = parent
+        self.children = {}
+        self.num_visits = 0
+        self.total_reward = 0
+        self.is_terminal = state.is_terminal()
+        self.is_fully_expanded = self.is_terminal
 
-class GameMode(IntEnum):
-    DASH = 1
-    SUM = 2
-    KING = 3
+class mcts():
+    def __init__(self, limit_type, limit, exploration_constant=(1 / math.sqrt(2)), rollout_func=pick_random_move):
+        self.limit_type = limit_type
+        if limit_type == 'time':
+            self.time_limit = max(1, limit) / 1000
+        elif limit_type == 'sims':
+            self.num_sims = max(1, int(limit))
+        self.exploration_constant = exploration_constant
+        self.rollout = rollout_func
 
-MOVE_DIRECTION = [(i - 1, j - 1) for i in range(3) for j in range(3) if i != 1 or j != 1]
+    def search(self, initial_state):
+        self.root = Node(initial_state, None)
 
-class CIFRACode25:
-    def __init__(self, game_mode=GameMode.SUM):
+        if self.limit_type == 'time':
+            time_limit = time.time() + self.time_limit
+            while time.time() < time_limit:
+                self.run_round()
+        else:
+            for i in range(self.num_sims):
+                self.run_round()
+
+        best_child = self.get_best_child(self.root, 0)
+        move = (move for move, node in self.root.children.items() if node is best_child).__next__()
+        return move
+
+    def run_round(self):
+        node = self.select(self.root)
+        reward = self.rollout(node.state)
+        self.backpropagate(node, reward)
+
+    def select(self, node):
+        while not node.is_terminal:
+            if node.is_fully_expanded:
+                node = self.get_best_child(node, self.exploration_constant)
+            else:
+                return self.expand(node)
+        return node
+
+    def expand(self, node):
+        moves = node.state.show_me_ya_moves()
+        for move in moves:
+            if move not in node.children:
+                new_node = Node(node.state.make_move(move), node)
+                node.children[move] = new_node
+                if len(moves) == len(node.children):
+                    node.is_fully_expanded = True
+                return new_node
+
+    def backpropagate(self, node, reward):
+        while node is not None:
+            node.num_visits += 1
+            node.total_reward += reward
+            node = node.parent
+
+    def get_best_child(self, node, exploration_constant):
+        best_value = float("-inf")
+        best_nodes = []
+        for child in node.children.values():
+            node_value = node.state.get_current_player() * child.total_reward / child.num_visits + exploration_constant * math.sqrt(
+                2 * math.log(node.num_visits) / child.num_visits)
+            if node_value > best_value:
+                best_value = node_value
+                best_nodes = [child]
+            elif node_value == best_value:
+                best_nodes.append(child)
+        return random.choice(best_nodes)
+
+WHITE = -1
+BLUE = 1
+NEUTRAL = 0
+COLORS = [WHITE, BLUE, NEUTRAL]
+
+DASH = 1
+SUM = 2
+KING = 3
+
+CAPTURED = -1
+temp = [False] * 20 + [True] * 5
+IS_GOAL_ROW = [temp, temp[::-1]]
+
+MOVE_DIRECTION = [(x, y) for x in [-1, 0, 1] for y in [-1, 0, 1] if x or y]
+MOVELIST = np.zeros((25, 8), dtype=int) + CAPTURED
+for idx in range(25):
+    orig_pos = np.array([idx // 5, idx % 5])
+    for dir in range(8):
+        pos = orig_pos + np.array(MOVE_DIRECTION[dir])
+        if np.any((pos < 0) + (pos > 4)):
+            continue
+        MOVELIST[idx, dir] = pos[0] * 5 + pos[1]
+MOVELIST = MOVELIST.T.tolist()
+
+
+
+def get_board_representation(pieces):
+    board = np.zeros((25), dtype=np.int8)
+    for i in range(5):
+        if pieces[i] == CAPTURED:
+            continue
+        board[pieces[i]] = i + 1
+    return board.reshape((5, 5))
+
+def print_state(board, pieces, player):
+    print('Tiles:')
+    tiles_arr = np.array([['⬛', '🟦', '⬜'][i] for i in board])
+    print(tiles_arr.reshape(5, 5))
+    print('Pieces (white = negative):')
+    white = get_board_representation(pieces[0])
+    blue = get_board_representation(pieces[1])
+    print(blue - white)
+    print('Next player:', [None, '🔵', '⚪'][player])
+
+class CIFRACode25State():
+    def __init__(self, game_mode):
+        self.board = [WHITE, BLUE] * 12
+        random.shuffle(self.board)
+        self.board.insert(12, NEUTRAL)
         self.game_mode = game_mode
 
-        tile_set = np.array(['⬜', '🟦'] * NUM_TILES_PER_COLOR)
-        np.random.shuffle(tile_set)
-        self.tiles = np.insert(tile_set, NUM_TILES_PER_COLOR, '⬛').reshape((5, 5))
-        
-        self.pieces = np.zeros((2, 5, 2), dtype=np.int8)
-        for c in Color:
-            piece_set = np.array(range(5))
-            np.random.shuffle(piece_set)
-            for p in range(5):
-                self.pieces[c, p] = [BLUE_START_INDEX * c, piece_set[p]]
+        self.pieces = [list(range(5)), list(range(20, 25))]
+        for i in range(2):
+            random.shuffle(self.pieces[i])
+        self.current_player = WHITE
 
-        self.player = Color.WHITE
+    def get_current_player(self):
+        return self.current_player
 
-    def get_initial_state(self):
-        pieces = np.zeros((2, 5), dtype=np.uint8)
-        for c in Color:
-            piece_set = np.array(range(5))
-            np.random.shuffle(piece_set)
-            pieces[c] = piece_set + BLUE_START_INDEX * c
-
-        player = Color.WHITE
-        return (pieces, player)
-
-    def get_board(self, pieces):
-        board = np.zeros((25), dtype=np.int8)
+    def show_me_ya_moves(self):
+        moves = []
+        player_idx = self.current_player == BLUE
+        opponent_idx = 1 - player_idx
+        friendly, enemy = self.pieces if self.current_player == WHITE else self.pieces[::-1]
         for i in range(5):
-            if pieces[i] == 25:
+            orig_pos = friendly[i]
+            if IS_GOAL_ROW[player_idx][orig_pos]:
                 continue
-            board[pieces[i]] = i + 1
-        return board.reshape((5, 5))
+            for dir in MOVELIST:
+                last_pos = orig_pos
+                is_moveable = True
+                while is_moveable:
+                    next_pos = dir[last_pos]
+                    if next_pos == CAPTURED or next_pos in friendly:
+                        break
+                    is_at_opponent_piece = next_pos in enemy
+                    if is_at_opponent_piece and IS_GOAL_ROW[opponent_idx][next_pos]:
+                        break
+                    moves.append((i, next_pos))
+                    is_moveable = self.board[last_pos] == self.current_player and self.board[next_pos] == self.current_player
+                    last_pos = next_pos
+        if len(moves) == 0:
+            print_state(self.board, self.pieces, self.current_player)
+            print(self.get_winner())
+            print(self.is_terminal())
+        return moves
 
-    def print_state(self, pieces, color):
-        print('Next player:', ['⚪', '🔵'][color])
-        print('Tiles:')
-        print(self.tiles)
-        print('Pieces (blue = negative):')
-        white = self.get_board(pieces[color])
-        blue = self.get_board(pieces[1 - color])
-        print(white - blue)
-
-    def get_moves(self, pieces, color):
-        movelist = []
+    def make_move(self, move):
+        new_state = deepcopy(self)
+        piece_idx, board_idx = move
+        player_idx = self.current_player == BLUE
+        opponent_idx = 1 - player_idx
+        new_state.pieces[player_idx][piece_idx] = board_idx
         for i in range(5):
-            p = pieces[color][i]
-            initial_row = p // 5
-            initial_col = p  % 5
-            if initial_row == GOAL_ROW[color]:
-                continue
-            for dir in MOVE_DIRECTION:
-                row = dir[0] + initial_row
-                col = dir[1] + initial_col
-                idx = row * 5 + col
-                if row < 0 or row > 4 or col < 0 or col > 4 or idx in pieces[color]:
-                    continue
-                new_pieces = np.copy(pieces)
-                new_pieces[color][i] = idx
-                new_pieces[1 - color][new_pieces[1 - color] == idx] = 25
-                movelist.append(new_pieces)
-        return movelist
+            if new_state.pieces[opponent_idx][i] == board_idx:
+                new_state.pieces[opponent_idx][i] = CAPTURED
+                break
+        new_state.current_player = self.current_player * (-1)
+        return new_state
+
+    def is_terminal(self):
+        if self.game_mode == KING:
+            for i in range(2):
+                king = self.pieces[i][4]
+                if king == CAPTURED or IS_GOAL_ROW[i][king]:
+                    return True
+        else:
+            for i in range(2):
+                locked = 0
+                for j in self.pieces[i]:
+                    locked += j == CAPTURED or IS_GOAL_ROW[i][j]
+                if locked == 5:
+                    return True
+        return False
+
+    def get_winner(self):
+        if self.game_mode == KING:
+            for i in range(2):
+                king = self.pieces[i][4]
+                if king == CAPTURED:
+                    return COLORS[1 - i]
+                if  IS_GOAL_ROW[i][king]:
+                    return COLORS[i]
+        goal = [0, 0]
+        alive = [0, 0]
+        score = [0, 0]
+        for i in range(2):
+            for j in range(5):
+                p = self.pieces[i][j]
+                if p != CAPTURED:
+                    goal[i] += IS_GOAL_ROW[i][p]
+                    alive[i] += 1
+                    score[i] += j
+        if self.game_mode == SUM and score[0] != score[1]:
+            return COLORS[score[1] > score[0]]
+        if goal[0] != goal[1]:
+            return COLORS[goal[1] > goal[0]]
+        return COLORS[alive[1] > alive[0]]
+
+
+
+
+if __name__=="__main__":
+    cifra_initial_state = CIFRACode25State(SUM)
+    cifra_searcher = mcts('sims', 1000)
+    cifra_move = cifra_searcher.search(initial_state=cifra_initial_state)
+    print(cifra_move)
     
-
-game = CIFRACode25()
-pieces, color = game.get_initial_state()
-game.print_state(pieces, color)
-moves = game.get_moves(pieces, color)
-
-i = 0
-for move in moves:
-    print('', i, ':')
-    i += 1
-    print(game.get_board(move[color]))
