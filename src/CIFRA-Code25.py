@@ -2,6 +2,7 @@ from ast import Pass
 import time
 import math
 import random
+<<<<<<< HEAD
 from copy import deepcopy
 from functools import reduce
 import operator
@@ -42,6 +43,38 @@ class mcts():
             time_limit = time.time() + self.time_limit
             while time.time() < time_limit:
                 self.run_round()
+=======
+import time
+import numpy as np
+import pygame
+from view.View import Screen
+from copy import deepcopy
+NUM_ROWS = 6
+NUM_COLS = 7
+
+
+class State:
+    
+    def __init__(self):
+        # initialize the board info here and any additional variables
+        self.board = np.zeros((NUM_ROWS, NUM_COLS)) # board initial state (all zeros)
+        self.column_heights = [NUM_ROWS - 1] * NUM_COLS # useful to keep track of the index in which pieces should be inserted
+        self.available_moves = list(range(7)) # list of playable columns (not full)
+        self.player = 1
+        self.winner = -1 # -1 - no winner (during game); 0 - draw; 1- player 1; 2 - player 2
+        
+    def move(self, column): 
+        # function that performs a move given the column number and returns the new state
+        # do not forget to update the available moves list, column heights, pass the turn and check for winners
+        state_copy = deepcopy(self)
+        
+        height = state_copy.column_heights[column]
+        state_copy.column_heights[column] = height
+        state_copy.board[height][column] = self.player
+        
+        if height == 0:
+            state_copy.available_moves.remove(column)
+>>>>>>> 9db49d09565b123801a99291484393bef78a32ef
         else:
             for i in range(self.num_sims):
                 self.run_round()
@@ -231,6 +264,7 @@ class CIFRACode25State():
             return COLORS[goal[1] > goal[0]]
         return COLORS[alive[1] > alive[0]]
 
+screen = Screen()
 
 
 
