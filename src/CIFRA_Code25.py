@@ -7,10 +7,6 @@ BLUE = 1
 NEUTRAL = 0
 COLORS = [WHITE, BLUE, NEUTRAL]
 
-DASH = 1
-SUM = 2
-KING = 3
-
 CAPTURED = -1
 temp = [False] * 20 + [True] * 5
 IS_GOAL_ROW = [temp, temp[::-1]]
@@ -51,7 +47,7 @@ class CIFRACode25State():
         CIFRACode25State.board = [WHITE, BLUE] * 12
         random.shuffle(CIFRACode25State.board)
         CIFRACode25State.board.insert(12, NEUTRAL)
-        CIFRACode25State.game_mode = game_mode
+        CIFRACode25State.game_mode = game_mode if game_mode in ['Sum', 'King'] else 'Dash'
 
         self.pieces = [list(range(5)), list(range(20, 25))]
         for i in range(2):
@@ -103,7 +99,7 @@ class CIFRACode25State():
         return new_state
 
     def is_terminal(self):
-        if self.game_mode == KING:
+        if self.game_mode == 'King':
             for i in range(2):
                 king = self.pieces[i][4]
                 if king == CAPTURED or IS_GOAL_ROW[i][king]:
@@ -118,7 +114,7 @@ class CIFRACode25State():
         return False
 
     def get_winner(self):
-        if self.game_mode == KING:
+        if self.game_mode == 'King':
             for i in range(2):
                 king = self.pieces[i][4]
                 if king == CAPTURED:
@@ -135,7 +131,7 @@ class CIFRACode25State():
                     goal[i] += IS_GOAL_ROW[i][p]
                     living[i] += 1
                     score[i] += j
-        if self.game_mode == SUM and score[0] != score[1]:
+        if self.game_mode == 'Sum' and score[0] != score[1]:
             return COLORS[score[1] > score[0]]
         if goal[0] != goal[1]:
             return COLORS[goal[1] > goal[0]]
