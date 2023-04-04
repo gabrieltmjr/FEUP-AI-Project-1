@@ -2,12 +2,15 @@ from ast import Pass
 import time
 import math
 import random
-<<<<<<< HEAD
+
 from copy import deepcopy
 from functools import reduce
 import operator
 import numpy as np
-
+import pygame
+from view.View import Screen
+NUM_ROWS = 6
+NUM_COLS = 7
 
 def pick_random_move(state):
     while not state.is_terminal():
@@ -43,14 +46,10 @@ class mcts():
             time_limit = time.time() + self.time_limit
             while time.time() < time_limit:
                 self.run_round()
-=======
-import time
-import numpy as np
-import pygame
-from view.View import Screen
-from copy import deepcopy
-NUM_ROWS = 6
-NUM_COLS = 7
+
+
+
+
 
 
 class State:
@@ -74,7 +73,7 @@ class State:
         
         if height == 0:
             state_copy.available_moves.remove(column)
->>>>>>> 9db49d09565b123801a99291484393bef78a32ef
+
         else:
             for i in range(self.num_sims):
                 self.run_round()
