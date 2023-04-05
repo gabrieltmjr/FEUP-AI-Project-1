@@ -29,24 +29,17 @@ pip install numpy
 
 ## How to Run
 
-
-1. Clone or download the repository to your local machine.
-
-``` 
-git clone https://github.com/gabrieltmjr/FEUP-AI-Project-1.git 
-```
-
-2. Navigate to the directory where the main.py is located
+1. Navigate to the directory where the main.py is located
 ```
 src/main.py
 ```
-3. Open a terminal in that directory.
-4. Run the following command to start the game:
+2. Open a terminal in that directory.
+3. Run the following command to start the game:
 ```
 python main.py
 ```
 
-5. The game window will open, and you can interact with it using the keyboard inputs as described in the game's instructions.
+4. The game window will open, and you can interact with it using the keyboard inputs as described in the game's instructions.
 
 
 # Game Instructions
