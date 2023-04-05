@@ -44,6 +44,7 @@ def print_state(state):
 
 class CIFRACode25State():
     def __init__(self, game_mode):
+        self.game_mode = game_mode
         CIFRACode25State.board = [WHITE, BLUE] * 12
         random.shuffle(CIFRACode25State.board)
         CIFRACode25State.board.insert(12, NEUTRAL)
