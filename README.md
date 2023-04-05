@@ -5,6 +5,12 @@ Cifra Code25 is a version of CIFRA that has a 5x5 board size.
 
 [Game Description and Rules](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/game-description-and-rules.md) <br>
 
+# Group Members
+
+António Augusto (up202000705@edu.fe.up.pt) <br>
+Gabriel Machado Jr. (up202008860@edu.fe.up.pt) <br>
+Miguel Curval (up201105191@edu.fe.up.pt)
+
 # Prerequisites
 
 - Python (version >=3.9)
@@ -55,18 +61,16 @@ python main.py
 
 ## Main Menu
 
-
+![Main Menu](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/main-menu-screenshot.png)
 
 ## Dash
 
+![Dash](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/dash-screenshot.png)
+
 ## Sum
+
+![Sum](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/sum-screenshot.png)
 
 ## King
 
-
-
-# Group Members
-
-António Augusto (up202000705@edu.fe.up.pt) <br>
-Gabriel Machado Jr. (up202008860@edu.fe.up.pt) <br>
-Miguel Curval (up201105191@edu.fe.up.pt)
+![King](https://github.com/gabrieltmjr/FEUP-AI-Project-1/blob/main/docs/img/king-screenshot.png)
